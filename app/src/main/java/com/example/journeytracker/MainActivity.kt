@@ -9,6 +9,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import java.io.BufferedReader
+import java.io.InputStreamReader
 
 class MainActivity : AppCompatActivity() {
 
@@ -17,6 +19,7 @@ class MainActivity : AppCompatActivity() {
     private var progress = 30
     private var totalStops = 5
     private var currentStop = 1
+    private lateinit var stopList: List<String>
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,6 +30,7 @@ class MainActivity : AppCompatActivity() {
         val btnToggleDistance = findViewById<Button>(R.id.btnToggleDistance)
         val btnNextStop = findViewById<Button>(R.id.btnNextStop)
         val progressBar = findViewById<ProgressBar>(R.id.progressBar)
+        val tvJourneyDetails =  findViewById<TextView>(R.id.tvJourneyDetails)
 
         btnToggleDistance.setOnClickListener{
             if(this.isKm){
@@ -42,16 +46,27 @@ class MainActivity : AppCompatActivity() {
         }
 
         btnNextStop.setOnClickListener{
-            fun nextStop(){
                 if(currentStop < totalStops){
                     currentStop++;
                     progress += (100/ totalStops)
                     progressBar.progress = progress
                 }
-            }
 
         }
 
+        stopList = loadStopsFromFile()
+        tvJourneyDetails.text = stopList[0]
+
         }
+
+    private fun loadStopsFromFile(): List<String>{
+
+        val stopList = mutableListOf<String>();
+        val inputStream = resources.openRawResource(R.raw.stops)
+        val reader = BufferedReader(InputStreamReader(inputStream))
+        reader.forEachLine{ stopList.add(it)}
+        reader.close()
+        return stopList;
+    }
 
     }

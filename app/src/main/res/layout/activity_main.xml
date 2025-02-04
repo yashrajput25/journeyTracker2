@@ -5,8 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/main"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     android:orientation="vertical">
 <!--    tools:context=".MainActivity">-->
 
@@ -21,21 +19,28 @@
         android:textStyle="bold"
         tools:ignore="HardcodedText" />
 
-    <TextView
-        android:id="@+id/tvDistance"
-        android:layout_width="178dp"
-        android:layout_height="wrap_content"
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:paddingBottom="10dp"
-        android:text="Distance: 500km"
-        android:textSize="18sp"
-        tools:ignore="HardcodedText" />
+        />
+
+<!--    <TextView-->
+<!--        android:id="@+id/tvDistance"-->
+<!--        android:layout_width="178dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:paddingBottom="10dp"-->
+<!--        android:text="Distance: 500km"-->
+<!--        android:textSize="18sp"-->
+<!--        tools:ignore="HardcodedText" />-->
 
     <Button
         android:id="@+id/btnToggleDistance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Convert to Miles"
-        tools:ignore="HardcodedText" />
+      />
 
     <Button
         android:id="@+id/btnNextStop"

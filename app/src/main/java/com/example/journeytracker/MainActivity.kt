@@ -15,12 +15,12 @@ class MainActivity : AppCompatActivity() {
 
     private var distanceInKm = 500
     private var isKm = true
-    private var progress = 30
+    private var progress = 0
     private var totalStops = 5
     private var currentStop = 1
     private lateinit var stopList: List<String>
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint("SetTextI18n", "NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -29,50 +29,52 @@ class MainActivity : AppCompatActivity() {
         val btnToggleDistance = findViewById<Button>(R.id.btnToggleDistance)
         val btnNextStop = findViewById<Button>(R.id.btnNextStop)
         val progressBar = findViewById<ProgressBar>(R.id.progressBar)
-        val tvJourneyDetails =  findViewById<TextView>(R.id.tvJourneyDetails)
+        val tvJourneyDetails = findViewById<TextView>(R.id.tvJourneyDetails)
         val tvDistance = findViewById<TextView>(R.id.tvDistance)
+        progressBar.progress = progress
 
-        btnToggleDistance.setOnClickListener{
-            if(this.isKm){
-                val distanceInMiles = distanceInKm*0.621
+        btnToggleDistance.setOnClickListener {
+            if (this.isKm) {
+                val distanceInMiles = distanceInKm * 0.621
                 tvDistance.text = "Distance: %.2f miles".format(distanceInMiles)
                 btnToggleDistance.text = "Convert to KMs"
-            }
-            else{
+            } else {
                 tvDistance.text = "Distance: $distanceInKm km"
                 btnToggleDistance.text = "Convert to Miles"
             }
             isKm = !isKm
         }
 
-        btnNextStop.setOnClickListener{
-                if(currentStop < totalStops){
-                    currentStop++;
-                    progress += (100/ totalStops)
-                    progressBar.progress = progress
-                }
+        stopList = loadStopsFromFile()
+        recyclerViewStops.layoutManager = LinearLayoutManager(this)
+        val adapter = StopsAdapter(stopList, currentStop)
+        recyclerViewStops.adapter = adapter
 
-            if(distanceInKm >0) {
-                distanceInKm = distanceInKm - 100;
+        btnNextStop.setOnClickListener {
+            if (currentStop < totalStops) {
+                currentStop++
+                progress += (100 / totalStops)
+                progressBar.progress = progress
+            }
+
+            if (distanceInKm > 0) {
+                distanceInKm -= 100
             }
             tvDistance.text = "Distance: $distanceInKm km"
 
+
+
+            recyclerViewStops.adapter = StopsAdapter(stopList, currentStop)
+            adapter.notifyDataSetChanged()
         }
+    }
 
-        stopList = loadStopsFromFile()
-        recyclerViewStops.layoutManager = LinearLayoutManager(this)
-        recyclerViewStops.adapter = StopsAdapter(stopList)
-
-        }
-
-    private fun loadStopsFromFile(): List<String>{
-
-        val stopList = mutableListOf<String>();
+    private fun loadStopsFromFile(): List<String> {
+        val stopList = mutableListOf<String>()
         val inputStream = resources.openRawResource(R.raw.stops)
         val reader = BufferedReader(InputStreamReader(inputStream))
-        reader.forEachLine{ stopList.add(it)}
+        reader.forEachLine { stopList.add(it) }
         reader.close()
-        return stopList;
+        return stopList
     }
-
-    }
+}

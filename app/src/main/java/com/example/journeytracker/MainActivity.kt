@@ -5,12 +5,11 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.RecyclerView
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import androidx.recyclerview.widget.LinearLayoutManager
 
 class MainActivity : AppCompatActivity() {
 
@@ -26,11 +25,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val tvDistance = findViewById<TextView>(R.id.tvDistance)
+        val recyclerViewStops = findViewById<RecyclerView>(R.id.recyclerViewStops)
         val btnToggleDistance = findViewById<Button>(R.id.btnToggleDistance)
         val btnNextStop = findViewById<Button>(R.id.btnNextStop)
         val progressBar = findViewById<ProgressBar>(R.id.progressBar)
         val tvJourneyDetails =  findViewById<TextView>(R.id.tvJourneyDetails)
+        val tvDistance = findViewById<TextView>(R.id.tvDistance)
 
         btnToggleDistance.setOnClickListener{
             if(this.isKm){
@@ -52,10 +52,16 @@ class MainActivity : AppCompatActivity() {
                     progressBar.progress = progress
                 }
 
+            if(distanceInKm >0) {
+                distanceInKm = distanceInKm - 100;
+            }
+            tvDistance.text = "Distance: $distanceInKm km"
+
         }
 
         stopList = loadStopsFromFile()
-        tvJourneyDetails.text = stopList[0]
+        recyclerViewStops.layoutManager = LinearLayoutManager(this)
+        recyclerViewStops.adapter = StopsAdapter(stopList)
 
         }
 

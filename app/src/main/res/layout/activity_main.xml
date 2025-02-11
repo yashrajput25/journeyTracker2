@@ -20,20 +20,21 @@
         tools:ignore="HardcodedText" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewStops"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:paddingBottom="10dp"
         />
 
-<!--    <TextView-->
-<!--        android:id="@+id/tvDistance"-->
-<!--        android:layout_width="178dp"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:paddingBottom="10dp"-->
-<!--        android:text="Distance: 500km"-->
-<!--        android:textSize="18sp"-->
-<!--        tools:ignore="HardcodedText" />-->
+    <TextView
+        android:id="@+id/tvDistance"
+        android:layout_width="178dp"
+        android:layout_height="wrap_content"
+        android:paddingBottom="10dp"
+        android:text="Distance: 500km"
+        android:textSize="18sp"
+        tools:ignore="HardcodedText" />
 
     <Button
         android:id="@+id/btnToggleDistance"

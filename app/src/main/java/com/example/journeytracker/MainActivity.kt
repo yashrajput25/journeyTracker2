@@ -13,14 +13,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 
 class MainActivity : AppCompatActivity() {
 
-    private var distanceInKm = 500
-    private var isKm = true
-    private var progress = 0
-    private var totalStops = 5
-    private var currentStopIndex = 0;
     private lateinit var allStops: List<String>
-    private val visibleStops =  mutableListOf<String>()
-    private lateinit var adapter : StopsAdapter
+    private lateinit var allDistances: List<Int>
+    private val visibleStops = mutableListOf<String>()
+    private var currentStopIndex = 0
+    private var progress = 0
+    private var isKm = true
+    private lateinit var adapter: StopsAdapter
 
     @SuppressLint("SetTextI18n", "NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,10 +32,18 @@ class MainActivity : AppCompatActivity() {
         val progressBar = findViewById<ProgressBar>(R.id.progressBar)
         val tvDistance = findViewById<TextView>(R.id.tvDistance)
 
-        allStops = loadStopsFromFile();
+        val (stops, distances) = loadStopsFromFile()
+        allStops = stops
+        allDistances = distances
 
-        if(allStops.isNotEmpty()){
-            visibleStops.add(allStops[0]);
+        if (allStops.isNotEmpty()) {
+            visibleStops.add(allStops[0])
+
+            if (allDistances.isNotEmpty()) {
+                tvDistance.text = "Distance to the next stop: ${allDistances[0]} km"
+            } else {
+                tvDistance.text = "Distance: Unknown"
+            }
         }
 
         recyclerViewStops.layoutManager = LinearLayoutManager(this)
@@ -45,48 +52,54 @@ class MainActivity : AppCompatActivity() {
         progressBar.progress = progress
 
         btnToggleDistance.setOnClickListener {
-            if (this.isKm) {
-                val distanceInMiles = distanceInKm * 0.621
-                tvDistance.text = "Distance: %.2f miles".format(distanceInMiles)
-                btnToggleDistance.text = "Convert to KMs"
-            } else {
-                tvDistance.text = "Distance: $distanceInKm km"
-                btnToggleDistance.text = "Convert to Miles"
-            }
+            val distance = allDistances.getOrElse(currentStopIndex) { 0 }
+            val displayDistance = if (isKm) "$distance km" else "${"%.2f".format(distance * 0.621)} miles"
+            tvDistance.text = "Distance to the next stop: $displayDistance"
             isKm = !isKm
         }
 
         btnNextStop.setOnClickListener {
             if (currentStopIndex < allStops.size - 1) {
                 currentStopIndex++
-                progress += (100 / totalStops)
+                progress = ((currentStopIndex.toFloat() / (allStops.size - 1)) * 100).toInt()
                 progressBar.progress = progress
 
 
-                if (distanceInKm > 0) {
-                    distanceInKm -= distanceInKm / (totalStops - currentStopIndex + 1)
-                }
-                tvDistance.text = "Distance: $distanceInKm km"
+                val distance = allDistances.getOrElse(currentStopIndex) { 0 }
+                tvDistance.text = "Distance to the next stop: $distance km"
 
-                if(currentStopIndex < allStops.size) {
-                    visibleStops.add(allStops[currentStopIndex])
-                    adapter.notifyItemInserted(visibleStops.size - 1)
-                }
+                visibleStops.add(allStops[currentStopIndex])
+                adapter.notifyItemInserted(visibleStops.size - 1)
             }
 
-            if(currentStopIndex == allStops.size -1){
+            if (currentStopIndex == allStops.size - 1) {
                 btnNextStop.isEnabled = false
                 btnNextStop.setBackgroundColor(resources.getColor(android.R.color.darker_gray))
+                progressBar.progress = 100
+                tvDistance.text = "You have arrived!"
             }
         }
     }
 
-    private fun loadStopsFromFile(): List<String> {
+
+    private fun loadStopsFromFile(): Pair<List<String>, List<Int>> {
         val stopList = mutableListOf<String>()
+        val distanceList = mutableListOf<Int>()
+
         val inputStream = resources.openRawResource(R.raw.stops)
         val reader = BufferedReader(InputStreamReader(inputStream))
-        reader.forEachLine { stopList.add(it) }
+
+        reader.forEachLine { line ->
+            val parts = line.split(",")
+            if (parts.size == 2) {
+                stopList.add(parts[0].trim())
+                distanceList.add(parts[1].trim().toInt())
+            }
+        }
         reader.close()
-        return stopList
+
+        return Pair(stopList, distanceList)
     }
 }
+
+

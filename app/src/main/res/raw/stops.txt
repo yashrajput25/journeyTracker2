@@ -1,5 +1,6 @@
-Stop 1: New York, USA (No Visa Required)
-Stop 2: London, UK (Transit Visa Required)
-Stop 3: Dubai, UAE (No Visa Required)
-Stop 4: Delhi, India (No Visa Required)
-Stop 5: Sydney, Australia (Visa Required)
+New York, 200
+London, 250
+Dubai, 300
+Delhi, 150
+Sydney, 0
+

@@ -31,7 +31,6 @@
         android:layout_width="match_parent"
         android:layout_height="61dp"
         android:paddingBottom="10dp"
-        android:text="Distance: 500km"
         android:textAlignment="center"
         android:textSize="18sp"
         tools:ignore="HardcodedText" />
@@ -43,7 +42,9 @@
         android:layout_height="50dp"
         android:layout_marginTop="20dp"
         android:max="100"
-        android:progress="30" />
+        android:progress="30"
+
+        />
 
     <Button
         android:id="@+id/btnToggleDistance"

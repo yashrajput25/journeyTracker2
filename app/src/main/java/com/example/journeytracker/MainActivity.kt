@@ -57,21 +57,27 @@ class MainActivity : AppCompatActivity() {
         }
 
         btnNextStop.setOnClickListener {
-            if (currentStopIndex < allStops.size-1) {
+            if (currentStopIndex < allStops.size - 1) {
                 currentStopIndex++
                 progress += (100 / totalStops)
                 progressBar.progress = progress
+
+
+                if (distanceInKm > 0) {
+                    distanceInKm -= distanceInKm / (totalStops - currentStopIndex + 1)
+                }
+                tvDistance.text = "Distance: $distanceInKm km"
+
+                if(currentStopIndex < allStops.size) {
+                    visibleStops.add(allStops[currentStopIndex])
+                    adapter.notifyItemInserted(visibleStops.size - 1)
+                }
             }
 
-            if (distanceInKm > 0) {
-                distanceInKm -= distanceInKm / (totalStops - currentStopIndex + 1)
+            if(currentStopIndex == allStops.size -1){
+                btnNextStop.isEnabled = false
+                btnNextStop.setBackgroundColor(resources.getColor(android.R.color.darker_gray))
             }
-            tvDistance.text = "Distance: $distanceInKm km"
-
-
-
-            visibleStops.add(allStops[currentStopIndex])
-            adapter.notifyItemInserted(visibleStops.size - 1)
         }
     }
 

@@ -1,5 +1,6 @@
 package com.example.journeytrackerjetcompose
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -30,9 +31,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.modifier.modifierLocalMapOf
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.journeytrackerjetcompose.ui.theme.JourneyTrackerJetComposeTheme
+import java.io.BufferedReader
+import java.io.InputStreamReader
 import kotlin.math.roundToInt
 
 class MainActivity : ComponentActivity() {
@@ -47,12 +51,14 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun JourneyTrackerApp(){
+    val context = LocalContext.current
 
-    var stops by remember { mutableStateOf(listOf("New York")) }
-    val allStops = listOf("New York", "London", "Dubai", "Delhi", "Sydney")
+    val (stopList , distanceList ) = loadStopsFromFile(context)
+
+    var stops by remember { mutableStateOf(listOf(stopList.firstOrNull() ?: "Unknown")) } // Start with first stop
     var currentStopIndex by remember { mutableIntStateOf(0) }
-    var progress by remember { mutableIntStateOf(0) }
-    var distanceInKm by remember { mutableDoubleStateOf(500.0) }
+    var progress by remember { mutableStateOf(0f) }
+    var distanceInKm by remember { mutableDoubleStateOf(distanceList.firstOrNull()?.toDouble() ?: 0.0) }
     var isKm by remember { mutableStateOf(true) }
 
     Column(
@@ -66,22 +72,22 @@ fun JourneyTrackerApp(){
                 .padding(top = 48.dp)
         ){
             Text(
-                text = "JourneyTracker", style = MaterialTheme.typography.headlineLarge,
-            modifier = Modifier.align(Alignment.Center)
+                text = "JourneyTracker",
+                style = MaterialTheme.typography.headlineLarge,
+                modifier = Modifier.align(Alignment.Center)
             )
         }
 
-        Spacer(modifier = Modifier.height(28.dp))
         Box(
             modifier = Modifier.fillMaxWidth().padding(top = 15.dp, bottom =  5.dp)
         ){
-            Text(text = "Distance : ${if (isKm)"$distanceInKm km" else "${distanceInKm * 0.621} miles"}",
+            Text(text = "Distance to the next stop: ${if (isKm)"$distanceInKm km" else "${distanceInKm * 0.621} miles"}",
                 style = MaterialTheme.typography.headlineSmall )
         }
 
         Spacer(modifier = Modifier.height(8.dp))
 
-            LinearProgressIndicator(progress = { progress/100f }, modifier = Modifier.fillMaxWidth())
+            LinearProgressIndicator(progress = { progress.toFloat() }, modifier = Modifier.fillMaxWidth())
 
 
 
@@ -112,17 +118,44 @@ fun JourneyTrackerApp(){
 
         Button(
             onClick = {
-                if (currentStopIndex < allStops.size - 1) {
+                if (currentStopIndex < stopList.size - 1) {
                     currentStopIndex++
-                    stops = stops + allStops[currentStopIndex] // Add next stop dynamically
-                    progress = (currentStopIndex.toFloat() / (allStops.size - 1) * 100).toInt()
-                    distanceInKm -= distanceInKm / (allStops.size - currentStopIndex + 1)
+                    stops = stops + stopList[currentStopIndex]
+                    progress = (currentStopIndex.toFloat() / (stopList.size - 1))
+
+                    // Update distance from list
+                    distanceInKm = distanceList.getOrElse(currentStopIndex) { 0 }.toDouble()
                 }
             },
-            enabled = currentStopIndex < allStops.size - 1
+            enabled = currentStopIndex < stopList.size - 1
         ) {
             Text("Next Stop Reached")
         }
 
     }
 }
+
+@Composable
+fun loadStopsFromFile(context: Context): Pair<List<String>, List<Int>> {
+    val stopList = mutableListOf<String>()
+    val distanceList = mutableListOf<Int>()
+
+    try {
+        val inputStream = context.resources.openRawResource(R.raw.stops)
+        val reader = BufferedReader(InputStreamReader(inputStream))
+
+        reader.forEachLine { line ->
+            val parts = line.split(",")
+            if (parts.size == 2) {
+                stopList.add(parts[0].trim())
+                distanceList.add(parts[1].trim().toInt())
+            }
+        }
+        reader.close()
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+
+    return Pair(stopList, distanceList) // Return both lists
+}
+

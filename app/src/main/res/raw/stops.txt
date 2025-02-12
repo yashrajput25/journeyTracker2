@@ -1,0 +1,5 @@
+New York, 200
+London, 250
+Dubai, 300
+Delhi, 150
+Sydney, 0

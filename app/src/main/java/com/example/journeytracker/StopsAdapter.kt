@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 
-class StopsAdapter(private val stops: List<String>, private val currentStop: Int): RecyclerView.Adapter<StopsAdapter.StopViewHolder>(){
+class StopsAdapter(private val stops: List<String>) : RecyclerView.Adapter<StopsAdapter.StopViewHolder>(){
 
     class StopViewHolder(itemView: View):RecyclerView.ViewHolder(itemView){
         val tvStopName: TextView = itemView.findViewById((R.id.tvStopName))
@@ -21,19 +21,11 @@ class StopsAdapter(private val stops: List<String>, private val currentStop: Int
     }
 
     override fun onBindViewHolder(holder: StopViewHolder, position: Int) {
-        holder.tvStopName.text = stops[position]
-
-        if(position == currentStop-1){
-            holder.tvStopName.setTextColor(Color.RED)
-        }
-        else{
-            holder.tvStopName.setTextColor(Color.BLACK)
-        }
+        holder.tvStopName.text = stops[position]  // Display only reached stops
     }
 
     override fun getItemCount(): Int {
         return stops.size
     }
-
 
 }

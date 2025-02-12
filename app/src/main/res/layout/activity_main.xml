@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/main"
     android:orientation="vertical">
-<!--    tools:context=".MainActivity">-->
+    <!--    tools:context=".MainActivity">-->
 
 
     <TextView
@@ -14,49 +13,53 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="10dp"
-        android:text="Journey Details"
-        android:textSize="20sp"
+        android:text="Journey Tracker App"
+        android:textSize="40sp"
         android:textStyle="bold"
-        tools:ignore="HardcodedText" />
+        tools:ignore="HardcodedText"
+        android:textAlignment="center"
+        android:paddingVertical="30dp"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewStops"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:paddingBottom="10dp"
-        />
+        android:layout_height="150dp"
+        android:paddingBottom="10dp" />
 
     <TextView
         android:id="@+id/tvDistance"
-        android:layout_width="178dp"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="61dp"
         android:paddingBottom="10dp"
         android:text="Distance: 500km"
+        android:textAlignment="center"
         android:textSize="18sp"
-        tools:ignore="HardcodedText" />
-
-    <Button
-        android:id="@+id/btnToggleDistance"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Convert to Miles"
-      />
-
-    <Button
-        android:id="@+id/btnNextStop"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Next Stop Reached"
-        android:layout_marginTop="10dp"
         tools:ignore="HardcodedText" />
 
     <ProgressBar
         android:id="@+id/progressBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
         style="?android:attr/progressBarStyleHorizontal"
-        android:progress="30"
-        android:max="100"/>
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="20dp"
+        android:max="100"
+        android:progress="30" />
+
+    <Button
+        android:id="@+id/btnToggleDistance"
+        android:layout_width="261dp"
+        android:layout_height="wrap_content"
+        android:text="Convert to Miles"
+        android:layout_gravity="center"
+        tools:ignore="HardcodedText" />
+
+    <Button
+        android:id="@+id/btnNextStop"
+        android:layout_width="265dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:text="Next Stop Reached"
+        tools:ignore="HardcodedText" />
+
 </LinearLayout>

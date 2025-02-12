@@ -17,8 +17,10 @@ class MainActivity : AppCompatActivity() {
     private var isKm = true
     private var progress = 0
     private var totalStops = 5
-    private var currentStop = 1
-    private lateinit var stopList: List<String>
+    private var currentStopIndex = 0;
+    private lateinit var allStops: List<String>
+    private val visibleStops =  mutableListOf<String>()
+    private lateinit var adapter : StopsAdapter
 
     @SuppressLint("SetTextI18n", "NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,8 +31,17 @@ class MainActivity : AppCompatActivity() {
         val btnToggleDistance = findViewById<Button>(R.id.btnToggleDistance)
         val btnNextStop = findViewById<Button>(R.id.btnNextStop)
         val progressBar = findViewById<ProgressBar>(R.id.progressBar)
-        val tvJourneyDetails = findViewById<TextView>(R.id.tvJourneyDetails)
         val tvDistance = findViewById<TextView>(R.id.tvDistance)
+
+        allStops = loadStopsFromFile();
+
+        if(allStops.isNotEmpty()){
+            visibleStops.add(allStops[0]);
+        }
+
+        recyclerViewStops.layoutManager = LinearLayoutManager(this)
+        adapter = StopsAdapter(visibleStops)
+        recyclerViewStops.adapter = adapter
         progressBar.progress = progress
 
         btnToggleDistance.setOnClickListener {
@@ -45,27 +56,22 @@ class MainActivity : AppCompatActivity() {
             isKm = !isKm
         }
 
-        stopList = loadStopsFromFile()
-        recyclerViewStops.layoutManager = LinearLayoutManager(this)
-        val adapter = StopsAdapter(stopList, currentStop)
-        recyclerViewStops.adapter = adapter
-
         btnNextStop.setOnClickListener {
-            if (currentStop < totalStops) {
-                currentStop++
+            if (currentStopIndex < allStops.size-1) {
+                currentStopIndex++
                 progress += (100 / totalStops)
                 progressBar.progress = progress
             }
 
             if (distanceInKm > 0) {
-                distanceInKm -= 100
+                distanceInKm -= distanceInKm / (totalStops - currentStopIndex + 1)
             }
             tvDistance.text = "Distance: $distanceInKm km"
 
 
 
-            recyclerViewStops.adapter = StopsAdapter(stopList, currentStop)
-            adapter.notifyDataSetChanged()
+            visibleStops.add(allStops[currentStopIndex])
+            adapter.notifyItemInserted(visibleStops.size - 1)
         }
     }
 
